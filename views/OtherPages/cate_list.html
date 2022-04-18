@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html >
+<head >
+   <meta charset="utf-8" >
+   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" >
+   <title >德德后台管理系统</title >
+   <link rel="stylesheet" href="../../assets/layui/css/layui.css" >
+   <link rel="stylesheet" href="../../assets/css/cate_list.css" >
+   <link rel="stylesheet" href="../../assets/css/ChangePassword.css" >
+</head >
+<body >
+<div class="layui-layout layui-layout-admin" >
+
+   {{include '../common/new-head.html'}}
+
+   <div class="layui-side layui-bg-black" >
+
+      {{include '../common/menu.html'}}
+
+   </div >
+
+   <div class="layui-body" >
+      <!-- 内容主体区域 -->
+      <div style="padding: 15px;" >
+         <div id="box_add" >
+            <div class="content" >
+               <h1 class="add_title" >添加</h1 >
+               <form class="layui-form" id="addUser" >
+                  <div class="layui-form-item" >
+                     <label class="layui-form-label" >用户名</label >
+                     <div class="layui-input-inline" >
+                        <input type="text" name="username" lay-verify="required" autocomplete="off"
+                               class="layui-input" >
+                     </div >
+                  </div >
+                  <div class="layui-form-item" >
+                     <div class="layui-inline" >
+                        <label class="layui-form-label" >验证邮箱</label >
+                        <div class="layui-input-inline" >
+                           <input type="text" name="email" lay-verify="email" autocomplete="off" class="layui-input" >
+                        </div >
+                     </div >
+                  </div >
+                  <div class="layui-form-item" >
+                     <label class="layui-form-label" >单选框</label >
+                     <div class="layui-input-block" >
+                        <input type="radio" name="sex" value="男" title="男" checked="" >
+                        <input type="radio" name="sex" value="女" title="女" >
+                     </div >
+                  </div >
+                  <div class="layui-form-item" >
+                     <div class="layui-input-block" >
+                        <button type="submit" class="layui-btn" lay-submit="" lay-filter="sortAdd" >立即提交</button >
+                        <button type="reset" class="layui-btn layui-btn-primary" >重置</button >
+                     </div >
+                  </div >
+               </form >
+            </div >
+         </div >
+
+         <table class="layui-hide" id="test" lay-data="{id:'idTest'}" lay-filter="test" ></table >
+      </div >
+
+   </div >
+
+   <div class="layui-footer" >
+      <!-- 底部固定区域 -->
+      底部固定区域
+   </div >
+</div >
+<script type="text/html" id="toolbarDemo" >
+   <div class="layui-btn-container" >
+      <button class="layui-btn layui-btn-sm" lay-event="add_ID" >添加用户</button >
+   </div >
+</script >
+<script type="text/html" id="barDemo" >
+   <a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a >
+   <a class="layui-btn layui-btn-danger layui-btn-xs " lay-event="del" >删除</a >
+</script >
+
+<!--<script src="../../assets/layui/layui.js" ></script >-->
+<script src="../../assets/js/js_cate_list.js" ></script >
+</body >
+</html >

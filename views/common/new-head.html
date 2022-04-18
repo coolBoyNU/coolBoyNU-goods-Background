@@ -1,0 +1,85 @@
+<div class="layui-header" >
+   <div class="layui-logo layui-hide-xs layui-bg-black" id="logo_header" >
+      <img src="" alt="" id="logo_image"
+           style="width: 50px; border-radius: 50%;" >
+      <span id="logoName" ></span >
+   </div >
+   <!-- 头部区域（可配合layui 已有的水平导航） -->
+   <ul class="layui-nav layui-layout-left" >
+      <!-- 移动端显示 -->
+      <li class="layui-nav-item layui-show-xs-inline-block layui-hide-sm" lay-header-event="menuLeft" >
+         <i class="layui-icon layui-icon-spread-left" ></i >
+      </li >
+
+   </ul >
+   <ul class="layui-nav layui-layout-right" >
+      <li class="layui-nav-item layui-hide layui-show-md-inline-block" >
+         <a href="javascript:;" >
+            <img src=""
+                 class="layui-nav-img" id="avatarName" >
+            <span id="accountName" >名称</span >
+         </a >
+         <dl class="layui-nav-child" >
+            <dd ><a href="/PersonalDataLi" >个人信息</a ></dd >
+            <dd id="ChangePassword" ><a href="JavaScript:;" >修改密码</a ></dd >
+            <dd ><a href="/login" >退出</a ></dd >
+         </dl >
+      </li >
+      <li class="layui-nav-item" lay-header-event="menuRight" lay-unselect >
+         <a href="javascript:;" >
+            <i class="layui-icon layui-icon-more-vertical" ></i >
+         </a >
+      </li >
+   </ul >
+</div >
+<div id="background-pop" >
+   <div class="div-pop" id="popup" >
+      <h1 class="div-top-title" >修改密码</h1 >
+      <form action="" class="layui-form" >
+         <div class="layui-form-item" >
+            <label class="layui-form-label" >旧密码</label >
+            <div class="layui-input-inline" >
+               <input type="password" name="TheOld_pwd" lay-verify="required" placeholder="请输入" autocomplete="off"
+                      class="layui-input" >
+               <span class="state_Correct" id="Theo1" ></span >
+            </div >
+         </div >
+         <div class="layui-form-item" >
+            <label class="layui-form-label" >新密码</label >
+            <div class="layui-input-inline" >
+               <input type="password" name="New_pwd" lay-verify="required" placeholder="请输入" autocomplete="off"
+                      class="layui-input" >
+               <span class="state_Correct" id="Theo2" ></span >
+            </div >
+         </div >
+         <div class="layui-form-item" >
+            <label class="layui-form-label" >确认密码</label >
+            <div class="layui-input-inline" >
+               <input type="password" name="Ack_pwd" lay-verify="required" placeholder="请输入" autocomplete="off"
+                      class="layui-input" >
+               <span class="state_Correct" id="Theo3" ></span >
+            </div >
+         </div >
+         <div class="layui-form-item" >
+            <div class="layui-input-block" >
+               <button type="submit" class="layui-btn" lay-submit="" lay-filter="demo1_pwd" >确认修改</button >
+            </div >
+         </div >
+
+      </form >
+   </div >
+</div >
+<script src="../../assets/layui/layui.js" ></script >
+<script src="../../assets/js/js_changePassword.js" ></script >
+<script >
+   // logo 图标 名称
+   let logo = document.getElementById('logoName');
+   let lgo = localStorage.getItem('logoEE');
+   logo.innerText = JSON.parse(lgo).val;
+   document.getElementById('logo_image').src = JSON.parse(lgo).pic;
+   // 用户头像，名称
+   document.getElementById('avatarName').src = localStorage.pic;
+   let ToObtainNickname = document.cookie.split('=')[1]
+   let Nick_name = JSON.parse(ToObtainNickname)
+   document.getElementById('accountName').innerText = Nick_name.Nick;
+</script >

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head >
+   <meta charset="UTF-8" >
+   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+   <meta name="viewport" content="width=device-width, initial-scale=1.0" >
+   <title >小猪博客登录</title >
+   <link rel="stylesheet" href="../assets/css/login.css" >
+</head >
+<body >
+<div class="login" >
+   <h1 >小猪博客管理系统</h1 >
+   <form id="usernameID" >
+      <input type="text" name="user" placeholder="Username" />
+      <input type="password" name="pwd" placeholder="Password" />
+      <button type="submit" id="loginBtn" class="btn btn-primary btn-block btn-large" >Login In</button >
+   </form >
+</div >
+</body >
+<script src="../assets/js/jquery.min.js" ></script >
+<script src="../assets/layui/layui.js" ></script >
+<script >
+   $("#loginBtn").on('click', () => {
+      //获取表单数据
+      let AccountPassword = $('#usernameID').serialize()
+      $.ajax({
+         url: '/logg',
+         type: 'post',
+         data: AccountPassword,
+         dataType: 'json',
+         success: function (data) {
+            let information = JSON.stringify(data);
+            if (data.errCode === 20000) {
+               layer.msg('登录成功')
+               document.cookie = `token=${information};expires= 24*24`;
+               localStorage.pic = data.avatar;
+               setTimeout(() => {
+                  location.href = '/index';
+               }, 1000)
+            } else {
+               layer.msg(data.message);
+            }
+         }
+      })
+
+      // 验证token
+      $.get('/afterlogin', function (data) {
+         console.log(data)
+      }, 'json')
+      return false;
+   })
+</script >
+</html >

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/html" >
+<head >
+   <meta charset="utf-8" >
+   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" >
+   <title >德德后台管理系统</title >
+   <link rel="stylesheet" href="./assets/layui/css/layui.css" >
+   <link rel="stylesheet" href="https://at.alicdn.com/t/font_2868669_hy64lfjqom5.css" >
+   <link rel="stylesheet" href="../../assets/css/ChangePassword.css" >
+
+</head >
+<body >
+<div class="layui-layout layui-layout-admin" >
+
+   {{include '../common/new-head.html'}}
+
+   <div class="layui-side layui-bg-black" >
+
+      {{include '../common/menu.html'}}
+
+   </div >
+
+   <div class="layui-body" >
+      <!-- 内容主体区域 -->
+      <div id="center" style="padding: 15px;" >
+         <!--            个人资料-->
+         <form class="layui-form" id="Sheet" >
+            <div class="layui-form-item" >
+               <label class="layui-form-label" >昵称</label >
+               <div class="layui-input-block" >
+                  <input type="text" name="nickname" lay-verify="title" value="一只小猪" autocomplete="off" disabled
+                         class="layui-input" >
+               </div >
+            </div >
+
+            <div class="layiu-form-item" >
+               <label class="layui-form-label" >头像</label >
+               <div class="layui-input-inline" style="margin: 9px 0;" >
+                  <input type="file" name="pic" id="chainPic" > <br />
+                  <img src="" id="imgPic" alt=""
+                       style="width: 250px; height: 150px; border: 1px solid #dedede;margin-top:10px;" >
+               </div >
+            </div >
+
+            <div class="layui-form-item layui-form-text" >
+               <label class="layui-form-label" ></label >
+               <div class="layui-input-block" >
+                  <textarea placeholder="请输入内容" name="intro" class="layui-textarea" ></textarea >
+               </div >
+            </div >
+            <div class="layui-form-item" >
+               <div class="layui-input-block" >
+                  <button type="submit" class="layui-btn" lay-submit="" lay-filter="PersonIDDemo" >立即提交</button >
+                  <button type="reset" class="layui-btn layui-btn-primary" >重置</button >
+               </div >
+            </div >
+         </form >
+      </div >
+   </div >
+
+   <div class="layui-footer" >
+      <!-- 底部固定区域 -->
+      底部固定区域
+   </div >
+</div >
+
+<script src="../../assets/js/js_personaIData.js" ></script >
+</body >
+</html >

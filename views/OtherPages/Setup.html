@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/html" >
+<head >
+   <meta charset="utf-8" >
+   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" >
+   <title >德德后台管理系统</title >
+   <link rel="stylesheet" href="./assets/layui/css/layui.css" >
+   <link rel="stylesheet" href="https://at.alicdn.com/t/font_2868669_hy64lfjqom5.css" >
+   <link rel="stylesheet" href="../../assets/css/ChangePassword.css" >
+
+</head >
+<body >
+<div class="layui-layout layui-layout-admin" >
+
+   {{include '../common/new-head.html'}}
+
+   <div class="layui-side layui-bg-black" >
+
+      {{include '../common/menu.html'}}
+
+   </div >
+
+   <div class="layui-body" >
+      <!-- 内容主体区域 -->
+      <div id="center" style="padding: 15px;" >
+
+         <form class="layui-form" id="logoForm" >
+            <div class="layui-form-item" >
+               <label class="layui-form-label" >logo名称</label >
+               <div class="layui-input-inline" >
+                  <input type="text" name="logo_name" lay-verify="required" placeholder="请输入" autocomplete="off"
+                         class="layui-input" >
+               </div >
+            </div >
+            <div class="layui-form-item" >
+               <label class="layui-form-label" >上传logo</label >
+               <div class="layui-input-block" >
+                  <input type="file" name="fileImg" style="display: none" id="pic" onchange="uploadFile(this)" >
+                  <button type="button" class="layui-btn layui-btn-normal" id="upd" >选择图片</button >
+                  <img id="preview" src="" alt=""
+                       style="position:absolute; left:15em; width: 150px;" >
+               </div >
+            </div >
+
+            <div class="layui-form-item" >
+               <div class="layui-input-block" >
+                  <button type="submit" class="layui-btn" lay-submit="" lay-filter="demo1" >立即修改</button >
+                  <button type="reset" class="layui-btn layui-btn-primary" >重置</button >
+               </div >
+            </div >
+
+         </form >
+      </div >
+   </div >
+
+   <div class="layui-footer" >
+      <!-- 底部固定区域 -->
+      底部固定区域
+   </div >
+</div >
+
+<script >
+   //上传图片
+   function uploadFile(fileEle) {
+      const file = fileEle.files[0];
+      //预览图片
+      const fileReader = new FileReader();
+      fileReader.readAsDataURL(file);
+      fileReader.onload = function () {
+         const Base64 = this.result;
+         document.getElementById('preview').src = Base64;
+      }
+   }
+
+   //上传图片触发按钮
+   document.getElementById('upd').onclick = function () {
+      document.getElementById('pic').click();
+   }
+
+   layui.use('form', function () {
+      let form = layui.form
+          , $ = layui.$;
+
+      form.on('submit(demo1)', function () {
+         let formData = new FormData($('#logoForm')[0]);
+         $.ajax({
+            url: '/sysSet',
+            type: 'post',
+            data: formData,
+            dataType: 'json',
+            processData: false, // 告诉jquery不需要处理数据
+            contentType: false, // 不需要设置编码
+         }).then(v => {
+            if (v.errCode === 20000) {
+               layer.msg('修改成功');
+               setTimeout(() => {
+                  location.href = '/index';
+               }, 1000)
+            }
+         })
+         return false;
+      });
+   })
+
+
+</script >
+</body >
+</html >

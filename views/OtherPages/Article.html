@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/html" >
+<head >
+   <meta charset="utf-8" >
+   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" >
+   <title >德德后台管理系统</title >
+   <link rel="stylesheet" href="./assets/layui/css/layui.css" >
+   <link rel="stylesheet" href="https://at.alicdn.com/t/font_2868669_hy64lfjqom5.css" >
+   <link rel="stylesheet" href="../../assets/css/ChangePassword.css" >
+   <link rel="stylesheet" href="../../assets/css/lightbox.min.css" >
+</head >
+<body >
+<div class="layui-layout layui-layout-admin" >
+
+   {{include '../common/new-head.html'}}
+
+   <div class="layui-side layui-bg-black" >
+
+      {{include '../common/menu.html'}}
+
+   </div >
+
+   <div class="layui-body" >
+      <!-- 内容主体区域 -->
+      <div id="center" style="padding: 15px;" >
+         <div style="display: flex;position: absolute;top: 2.3em;left: 10.4em;width: 450px;z-index: 999;" >
+            <input type="text" id="keyword" autocomplete="off" placeholder="输入内容" class="layui-input" >
+            <button class="layui-btn layui-btn-warn" id="search" >立即搜索</button >
+         </div >
+         <table class="layui-hide" id="test" lay-filter="test" ></table >
+
+      </div >
+   </div >
+
+   <div class="layui-footer" >
+      <!-- 底部固定区域 -->
+      底部固定区域
+   </div >
+</div >
+
+<script type="text/html" id="toolbarDemo" >
+   <div class="layui-btn-container" >
+      <button class="layui-btn layui-btn-sm" lay-event="add_Data" >添加数据</button >
+   </div >
+</script >
+<script type="text/html" id="barDemo" >
+   <a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a >
+   <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" >删除</a >
+</script >
+<script src="../../assets/js/lightbox-plus-jquery.min.js" ></script >
+<script >
+   // 弹窗显示内容
+   function showContent(data) {
+      let { title, content, username, add_date } = data;
+      content = `<div style="padding:15px">
+        <h2>${title}</h2>
+        <div>${add_date} ${username}</div>
+        ${content}
+      </div>`
+      //页面层
+      layer.open({
+         title,
+         content,
+         type: 1,
+         skin: 'layui-layer-rim', //加上边框
+         area: [ '620px', '640px' ], //宽高
+
+      });
+   }
+
+   layui.use('table', function () {
+      var table = layui.table,
+          $ = layui.$;
+
+      table.render({
+         elem: '#test'
+         , url: '/articleData'/*tpa=https://www.layuiweb.com/test/table/demo1.json*/
+         , toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
+         , defaultToolbar: [ 'filter', 'exports', 'print', { //自定义头部工具栏右侧图标。如无需自定义，去除该参数即可
+            title: '提示'
+            , layEvent: 'LAYTABLE_TIPS'
+            , icon: 'layui-icon-tips'
+         } ]
+         , title: '用户数据表'
+         , cols: [ [
+            { type: 'checkbox', fixed: 'left' }
+            , { field: 'id', title: 'ID', width: 80, fixed: 'left', unresize: true, sort: true }
+            , { field: 'title', title: '文章标题' }
+            , {
+               field: 'pic', title: '封面图', templet: ({ pic }) => {
+                  return `<a class="example-image-link" href="${pic}" data-lightbox="example-set" data-title="The next image in the set is preloaded as you're viewing."><img class="example-image" src="${pic}" alt="" /></a>`
+               }
+            }
+            , {
+               field: ' ', title: '内容', templet: (data) => {
+                  let mydata = JSON.stringify(data)
+                  return `<a href="javascript:;" onclick='showContent(${mydata})'>预览内容</a>`
+               }
+            }
+            , { field: 'username', title: '发布者' }
+            , { field: 'statusText', title: '状态', }
+            , { field: 'add_date', title: '添加时间' }
+            , { field: 'cate_name', title: '所属分类' }
+            , { fixed: 'right', title: '操作', toolbar: '#barDemo', }
+         ] ]
+         , page: {
+            limit: 10, //一次响应条数
+            prev: '上一页',
+            next: '下一页'
+         }
+      });
+
+      //头工具栏事件
+      table.on('toolbar(test)', function (obj) {
+         if (obj.event === 'add_Data') {
+            location.href = '/artAdd';
+         }
+      });
+
+      //监听行工具事件
+      table.on('tool(test)', function (obj) {
+         var data = obj.data;
+         if (obj.event === 'del') {
+            layer.confirm('真的删除行么', function (index) {
+               obj.del();
+               const ID = obj.data.id;
+               $.get(`/ArticleDel/${ID}`).then(value => {
+                  if (value.errCode === 20000) {
+                     layer.msg('删除成功', { icon: 1 });
+                  } else {
+                     layer.msg('删除失败', { icon: 2 });
+                  }
+               }, 'json')
+               layer.close(index);
+            });
+         } else if (obj.event === 'edit') {
+            location.href = `/editArticle?${obj.data.id}`;
+         }
+      });
+
+      //搜索
+      $('#search').on('click', () => {
+         let keyword = $('#keyword').val();
+         //发送 ajax 请求
+         table.reload('test', {
+            where: { keyword } //设定异步数据接口的额外参数
+         })
+      })
+      //搜索框如果没有内容则显示全部内容
+      $('#keyword').on('input', function () {
+         if (this.value === '') {
+            table.reload('test', {
+               where: {} //设定异步数据接口的额外参数
+            })
+         }
+      })
+   });
+</script >
+</body >
+</html >

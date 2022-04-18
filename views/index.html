@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html >
+<head >
+   <meta charset="utf-8" >
+   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" >
+   <title >德德后台管理系统</title >
+   <link rel="stylesheet" href="./assets/layui/css/layui.css" >
+   <link rel="stylesheet" href="https://at.alicdn.com/t/font_2868669_hy64lfjqom5.css" >
+   <link rel="stylesheet" href="../assets/css/ChangePassword.css" >
+</head >
+<body >
+<div class="layui-layout layui-layout-admin" >
+
+   {{include './common/new-head.html'}}
+
+   <div class="layui-side layui-bg-black" >
+
+      {{include './common/menu.html'}}
+
+   </div >
+
+   <div class="layui-body" >
+
+      <!-- 内容主体区域 -->
+      <div id="center" style="padding: 15px;" >
+
+         <div id="main" style="width: 600px;height:600px;" ></div >
+
+      </div >
+   </div >
+
+   <div class="layui-footer" >
+      <!-- 底部固定区域 -->
+      底部固定区域
+   </div >
+</div >
+
+
+<script src="../assets/js/js_changePassword.js" ></script >
+<script src="https://cdn.jsdelivr.net/npm/js-base64@3.7.2/base64.min.js" ></script >
+<script src="https://cdn.staticfile.org/echarts/4.3.0/echarts.min.js" ></script >
+<script >
+   //section JS
+   layui.use([ 'form', 'element', 'util', 'table' ], function () {
+      let element = layui.element
+          , layer = layui.layer
+          , util = layui.util
+          , table = layui.table
+          , $ = layui.$
+          , form = layui.form
+          , layedit = layui.layedit;
+
+      //获取系统设置logo名称
+      $.get('logoName', function (data) {
+         $('#logoName').html(data[0].val);
+         $('#logo_image').attr('src', data[0].pic);
+
+         let lgo = JSON.stringify(data[0]);
+         localStorage.setItem('logoEE', lgo);
+      }, 'json');
+
+      //section 头部事件
+      util.event('lay-header-event', {
+         //section 左侧菜单事件
+         menuLeft: function (othis) {
+            layer.msg('展开左侧菜单的操作111', { icon: 0 });
+         }
+         , menuRight: function () {
+            layer.open({
+               type: 1
+               , content: '<div style="padding: 15px;">处理右侧面板的操作234</div>'
+               , area: [ '260px', '100%' ]
+               , offset: 'rt' //右上角
+               , anim: 5
+               , shadeClose: true
+            });
+         }
+      });
+
+      //图形可视化
+      function loadGraphy(cates) {
+         // 基于准备好的dom，初始化echarts实例
+         var myChart = echarts.init(document.getElementById('main'));
+         // 指定图表的配置项和数据
+         var option = {
+            legend: {
+               top: 'bottom'
+            },
+            toolbox: {
+               show: true,
+               feature: {
+                  mark: { show: true },
+                  dataView: { show: true, readOnly: false },
+                  restore: { show: true },
+                  saveAsImage: { show: true }
+               }
+            },
+            series: [
+               {
+                  name: 'Nightingale Chart',
+                  type: 'pie',
+                  radius: [ 50, 250 ],
+                  center: [ '50%', '50%' ],
+                  roseType: 'area',
+                  itemStyle: {
+                     borderRadius: 28
+                  },
+                  data: cates
+               }
+            ]
+         };
+         // 使用刚指定的配置项和数据显示图表。
+         myChart.setOption(option);
+      }
+
+      $.get('/visualization').then(v => {
+         let cates = [];
+         v.forEach(item => {
+            let value = item.total;
+            let name = item.cate_name;
+            let NowObj = { value, name };
+            cates.push(NowObj);
+         })
+         //图形可视化
+         loadGraphy(cates);
+      })
+
+   });
+
+</script >
+</body >
+</html >

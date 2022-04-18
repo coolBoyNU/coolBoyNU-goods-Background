@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/html" >
+<head >
+   <meta charset="utf-8" >
+   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" >
+   <title >德德后台管理系统</title >
+   <link rel="stylesheet" href="../../assets/layui/css/layui.css" >
+   <link rel="stylesheet" href="../../assets/css/ChangePassword.css" >
+   <link rel="stylesheet" href="https://at.alicdn.com/t/font_2868669_hy64lfjqom5.css" >
+   <link href="https://cdn.jsdelivr.net/npm/@wangeditor/editor@latest/dist/css/style.css" rel="stylesheet" >
+</head >
+<body >
+<div class="layui-layout layui-layout-admin" >
+
+   {{include '../common/new-head.html'}}
+
+   <div class="layui-side layui-bg-black" >
+
+      {{include '../common/menu.html'}}
+
+   </div >
+
+   <div class="layui-body" >
+      <!-- 内容主体区域 -->
+      <div id="center" style="padding: 15px;" >
+
+         <form class="layui-form" lay-filter="example" id="addingData" >
+            <div class="layui-form-item" >
+               <label class="layui-form-label" >文章标题</label >
+               <div class="layui-input-block" >
+                  <input type="text" name="title" lay-verify="title" autocomplete="off" placeholder="请输入标题"
+                         class="layui-input" >
+               </div >
+            </div >
+            <div class="layui-form-item" >
+               <label class="layui-form-label" >所属分类</label >
+               <div class="layui-input-block" >
+                  <select id="cate_id" name="cate_id" >
+                     <option value="0" >未分类</option >
+                  </select >
+               </div >
+            </div >
+
+            <div class="layui-form-item" >
+               <label class="layui-form-label" >上传封面</label >
+               <div class="layui-input-block" >
+                  <input type="file" name="fileImg" style="display: none" id="pic" onchange="uploadFile(this)" >
+                  <button type="button" class="layui-btn layui-btn-normal" id="upd" >上传图片</button >
+                  <img id="preview" src="" alt=""
+                       style="position:absolute; left:15em; width: 150px;" >
+               </div >
+            </div >
+
+            <div class="layui-form-item" >
+               <label class="layui-form-label" >单选框</label >
+               <div class="layui-input-block" >
+                  <input type="radio" name="review" value="0" title="审核中" >
+                  <input type="radio" name="review" value="1" title="审核通过" >
+               </div >
+            </div >
+
+            <div class="layui-form-item layui-form-text" >
+               <label class="layui-form-label" >文章内容</label >
+               <div class="layui-input-block" >
+                  <div id="toolbar-container" style="border: 1px solid #ccc;" ></div >
+                  <div id="editor-container" style="border: 1px solid #ccc;border-top: none;height: 200px;" ></div >
+               </div >
+            </div >
+
+
+            <div class="layui-form-item" >
+               <div class="layui-input-block" >
+                  <button type="submit" class="layui-btn" lay-submit="" lay-filter="demo_revise" >立即提交</button >
+                  <button type="reset" class="layui-btn layui-btn-primary" >重置</button >
+               </div >
+            </div >
+
+         </form >
+
+      </div >
+   </div >
+
+   <div class="layui-footer" >
+      <!-- 底部固定区域 -->
+      底部固定区域
+   </div >
+</div >
+
+<script src="https://cdn.jsdelivr.net/npm/@wangeditor/editor@latest/dist/index.min.js" ></script >
+<script >
+   const reg = /\?(\d+)/
+   const [ , id ] = location.search.match(reg);
+   //富文本编辑器
+   let editor;
+
+   function initCateData(Text) {
+      var E = window.wangEditor; // 全局变量
+      // 创建编辑器
+      editor = E.createEditor({
+         selector: '#editor-container',
+         // config: E.editorConfig,
+         html: Text,
+         mode: 'default' // 或 'simple' 参考下文
+      })
+
+      // 创建工具栏
+      const toolbar = E.createToolbar({
+         editor,
+         selector: '#toolbar-container',
+         mode: 'default' // 或 'simple' 参考下文
+      })
+   }
+
+   //上传图片
+   function uploadFile(fileEle) {
+      const file = fileEle.files[0];
+      //预览图片
+      const fileReader = new FileReader();
+      fileReader.readAsDataURL(file);
+      fileReader.onload = function () {
+         const Base64 = this.result;
+         document.getElementById('preview').src = Base64;
+      }
+   }
+
+   //上传图片触发按钮
+   document.getElementById('upd').onclick = function () {
+      document.getElementById('pic').click();
+   }
+
+   layui.use([ 'table', 'form' ], function () {
+      let upload = layui.upload,
+          form = layui.form,
+          $ = layui.$;
+      // 默认加载所有的分类
+      $.get('/cateData').then(value => {
+         let rlt;
+         value.forEach(item => {
+            const { cate_id, cate_name } = item;
+            rlt += `<option value="${cate_id}" >${cate_name}</option >`
+         })
+         $('#cate_id').append(rlt);
+         form.render('select'); //需要渲染一下才会出现
+      }, 'json');
+
+      //数据回显
+      $.get('/fetchOneArt', { id }).then(value => {
+         const { title, content, cate_id, pic, status } = value;
+         status === 1 ? true : false;
+         form.val('example', {
+            title,
+            cate_id,
+            review: status
+         })
+         $('#preview').attr('src', pic);
+         initCateData(content)
+      })
+
+      //监听提交
+      form.on('submit(demo_revise)', function () {
+         let formData = new FormData($("#addingData")[0]);
+         const htmlEdi = editor.getHtml();
+         formData.set('TextEdi', htmlEdi);
+         formData.append('id', id);
+         $.ajax({
+            url: '/reviseData',
+            type: 'post',
+            dataType: 'json',
+            data: formData,
+            contentType: false,
+            processData: false
+         }).then(v => {
+            if (v.errCode === 20000) {
+               layer.msg('修改成功');
+               setTimeout(() => {
+                  location.href = '/Article';
+               }, 1000)
+            }
+         });
+
+         return false;
+      });
+
+   });
+
+</script >
+</body >
+</html >
